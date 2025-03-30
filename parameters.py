@@ -31,6 +31,6 @@ promoter_rates = {
            'initiated_to_off': 0.1, # Lower slider 
            'initiated_to_on': 0.7,  # Upper slider
            'on_to_off': 0.2          
-           } 
+           }
     for gene in genes
 }

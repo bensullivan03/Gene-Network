@@ -28,19 +28,20 @@ def generate_promoter_history(genes, promoter_probs, t_vals):
     histories = {g: [] for g in genes}
     for t in t_vals:
         for g in genes:
+
             # Transition from 'off' state
             if current[g] == 'OFF':
                 if np.random.rand() < promoter_probs[g]['off_to_initiated'] * step:
-                    current[g] = 'initiated'
+                    current[g] = 'INITIATED'
 
             # Transitions from 'initiated' state
             elif current[g] == 'INITIATED':
                 if np.random.rand() < promoter_probs[g]['initiated_to_off'] * step:
-                    current[g] = 'off'
+                    current[g] = 'OFF'
                 elif np.random.rand() > (promoter_probs[g]['initiated_to_on']) * step:
-                    current[g] = 'on'
+                    current[g] = 'ON'
                 else:
-                    current[g] = 'initiated'
+                    current[g] = 'INITIATED'
 
             # Transition from 'on' state
             elif current[g] == 'ON':
@@ -54,9 +55,10 @@ def generate_promoter_history(genes, promoter_probs, t_vals):
 # Building the main simulation
 def simulation():
     reg_map = build_regulatory_map()
-    promoter_probs = {g: {'on': promoter_transition[g]['on'].get(),
-                          'off': promoter_transition[g]['off'].get(),
-                          'initiated': promoter_transition[g]['initiated'].get(),
+    promoter_probs = {g: {'off_to_initiated': promoter_transition[g]['off_to_initiated'].get(),
+                          'initiated_to_off': promoter_transition[g]['initiated_to_on'].get(),
+                          'initiated_to_on': promoter_transition[g]['initiated_to_off'].get(),
+                          'on_to_off': promoter_transition[g]['on_to_off'].get()
                           }
                       for g in genes}
 

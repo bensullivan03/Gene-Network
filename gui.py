@@ -57,19 +57,30 @@ def run_gui():
     row_idx += 1
 
     for gene_name in genes:
-        # Initialize this gene's promoter transition dictionary
+        # Initisalise transition dictionary
         simulation.promoter_transition[gene_name] = {}
 
-        for state in ['on', 'off']:
-            ttk.Label(root, text=f"{gene_name}_{state}").grid(row=row_idx, column=0)
+    
+        transition_parameters = [
+            ("OFF -> INITIATED", "off_to_initiated" ),
+            ("INITIATED -> ON", "initiated_to_on"),
+            ("INITIATED -> OFF", "initiated_to_off"),
+            ("ON -> OFF", "on_to_off"),
+        ]
 
-            initial_val = promoter_rates[gene_name][state]
+        # Creating sliders for transition probability
+        for label, key in transition_parameters:
+            
+            ttk.Label(root, text=f"{gene_name} {key}").grid(row=row_idx, column=0)
+
+            initial_val = promoter_rates[gene_name][key]
             promoter_var = tk.DoubleVar(value=initial_val)
-            simulation.promoter_transition[gene_name][state] = promoter_var
+            simulation.promoter_transition[gene_name][key] = promoter_var
 
-            promoter_slider = ttk.Scale(root, from_=0.0, to=1.0, orient="horizontal", length=200, variable=promoter_var)
+            promoter_slider = ttk.Scale(root, from_=0.0, to=1.0, orient="horizontal", length=200, 
+                                        variable=simulation.promoter_transition[gene_name][key])
+            
             promoter_slider.grid(row=row_idx, column=1)
-
             promoter_entry = ttk.Entry(root, width=6)
             promoter_entry.grid(row=row_idx, column=2)
             promoter_entry.insert(0, f"{initial_val:.2f}")
