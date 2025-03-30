@@ -22,14 +22,31 @@ def build_regulatory_map():
 # 2 step Markov function for changing promoter state
 def generate_promoter_history(genes, promoter_probs, t_vals):
     step = dt
-    current = {g: random.choice(['ON', 'OFF']) for g in genes}
+    # Initated state
+    states = ['ON', 'OFF', 'INITIATED']
+    current = {g: random.choice(states) for g in genes}
     histories = {g: [] for g in genes}
     for t in t_vals:
         for g in genes:
-            if current[g] == 'OFF' and np.random.rand() < promoter_probs[g]['on'] * step:
-                current[g] = 'ON'
-            elif current[g] == 'ON' and np.random.rand() < promoter_probs[g]['off'] * step:
-                current[g] = 'OFF'
+            # Transition from 'off' state
+            if current[g] == 'OFF':
+                if np.random.rand() < promoter_probs[g]['off_to_initiated'] * step:
+                    current[g] = 'initiated'
+
+            # Transitions from 'initiated' state
+            elif current[g] == 'INITIATED':
+                if np.random.rand() < promoter_probs[g]['initiated_to_off'] * step:
+                    current[g] = 'off'
+                elif np.random.rand() > (promoter_probs[g]['initiated_to_on']) * step:
+                    current[g] = 'on'
+                else:
+                    current[g] = 'initiated'
+
+            # Transition from 'on' state
+            elif current[g] == 'ON':
+                if np.random.rand() < promoter_probs[g]['on_to_off'] * step:
+                    current[g] = 'OFF'
+        
             histories[g].append(current[g])
     return {g: lambda t, hist=np.array(states): hist[min(int(t/step), len(hist)-1)]
             for g, states in histories.items()}
@@ -38,7 +55,9 @@ def generate_promoter_history(genes, promoter_probs, t_vals):
 def simulation():
     reg_map = build_regulatory_map()
     promoter_probs = {g: {'on': promoter_transition[g]['on'].get(),
-                          'off': promoter_transition[g]['off'].get()}
+                          'off': promoter_transition[g]['off'].get(),
+                          'initiated': promoter_transition[g]['initiated'].get(),
+                          }
                       for g in genes}
 
     steps = int(T / dt) + 1

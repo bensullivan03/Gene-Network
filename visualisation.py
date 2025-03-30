@@ -8,13 +8,19 @@ def plot_results(t_vals, mRNA_vals, protein_vals, promoter_history, genes):
     # Plot promoter state over time
     
     for k, gene in enumerate(genes): 
-        state_binary = []
+        state_value = []
         for t in t_vals:
             current_state = promoter_history[gene](t)
-            state_binary.append(1 if current_state == 'ON' else 0)
+            if current_state == 'ON':
+                value = 1
+            elif current_state == 'INITIATED':
+                value = 0.2
+            else:
+                value = 0
+            state_value.append(value)
 
         offset = k * 1.2
-        axs[0].step(t_vals, np.array(state_binary) + offset, where='post', label=gene)
+        axs[0].step(t_vals, np.array(state_value) + offset, where='post', label=gene)
 
     axs[0].set_yticks([i * 1.2 for i in range(len(genes))])
     axs[0].set_yticklabels(genes)
