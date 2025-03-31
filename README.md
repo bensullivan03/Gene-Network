@@ -35,8 +35,9 @@ TO DO:
 
 * There are probably bugs I haven't found...
 * Delay between promoter region turning on and mRNA levels rising - transcription and leaving nuclei also takes time
-* Update Markov model to use 3 states - ON, OFF and INITIATION - more realistic
+* Update Markov model to use 3 states - ON, OFF and INITIATION - more realistic 
     - Need to ensure that probabilities do not sum to greater than 1 for promoter region
+        - Have 2 sliders in gui
     - Model transcription factors?
 * More realistic protein and mRNA degradation
 * Proteins should influence promoter region switch probability - i.e. 'on' and 'off' and 'initiation' probabilities - not just promotion/ inhibition of transcription
